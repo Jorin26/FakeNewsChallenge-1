@@ -34,7 +34,7 @@ Over the past couple of years, the issue of “fake news” \-- defined by the
 New York Times as “made-up stories written with the intention to deceive” and 
 published in formats similar to those of traditional “real” news has arisen as 
 a threat to high-quality journalism and the society in general. 
-In particular,fake news has been accused of increasing political polarization 
+In particular, fake news has been accused of increasing political polarization 
 and partisan conflict in the United States during the divisive 2016 
 presidential campaign and also during the Brexit referendum in 2016.
 In our final project for DS5220, we try to combat this serious social problem 
@@ -113,7 +113,7 @@ GRU is similar with LSTM. Unlike LSTM, GRU combines forget and input gates
 into a single “update gate” and merges the cell state and hidden state.
 This makes GRU computationally more efficient than LSTM and GRU model has 
 been increasingly popular. For this project we will use TensorFlow API for GRU,
-tf.nn.rnn\_cell.GRUCell. 
+\textit{tf.nn.rnn\_cell.GRUCell}. 
 It is often said, that neural network performs better for a case like this. 
 Therefore, in this chance, we will also perform logistic regression as a 
 baseline for our project. We will build the logistic regression from scratch.
@@ -123,9 +123,15 @@ To measure the accuracy, we will use the evaluation tool provided by
 Fake News Challenge. The tool will evaluate our model and output a score. 
 The score is weighted as follows:
 \begin{enumerate}
-    \item Classifying pair of body and headline as related and unrelated is weighted 25\%
-    \item Classifying related pairs as agrees, disagrees, or discusses is weigted as 75\%
+    \item Classifying pair of body and headline as related and unrelated is 
+      weighted 25\%
+    \item Classifying related pairs as agrees, disagrees, or discusses is 
+      weigted as 75\%
 \end{enumerate}
-The reason behind the weighting is the related/unrelated classification task is expected to be much easier while classifying the agrees, disagrees or discuss is more difficult and more relevant to fake news detection.
+The reason behind the weighting is the related/unrelated classification task is
+expected to be much easier while classifying the agrees, disagrees or discuss 
+is more difficult and more relevant to fake news detection.
+
+\section{References}
 
 \end{document}
