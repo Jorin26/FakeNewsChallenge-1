@@ -51,14 +51,16 @@ A reasoning for these labels is as follows:
     but does not take a position
   \item \textbf{Unrelated}: The body text discusses a different topic than the headline
 \end{enumerate}
+
 Here, we don’t label the the news as binary (fake news or legitimate news),
 because labelling such datasets with binary label tend to be biased towards 
-the labeller.The classifier that we build could later be used as a base of a 
+the labeller. The classifier that we build could later be used as a base of a 
 fake news detection tool that can automatically categorize the news into the 
 stances given.
 
 \section{Proposed Project}
 \subsection{Dataset Overview}
+
 The data provided by the Fake News Challenge consists of 
 headline, body, and stace. 
 Where stace is one of the categories we have mentioned above: 
@@ -70,6 +72,7 @@ For training, there are two csv files:
       headlines and article bodies, in which the article bodies rever to the 
       bodies in train\_bodies.csv
 \end{enumerate}
+
 The distribution of the data is as follows:
 \begin{center}
   \begin{tabular} 
@@ -92,6 +95,7 @@ and non-alphabetic symbols.
 
 \subsection{Methods}
 \subsubsection{Pre-processing}
+
 The text from the corpus will be converted to tokens using \textit{‘nltk’} package and 
 then be mapped to corresponding vectorized forms using  pre-trained \textit{GloVe} 
 representations freely available on the Stanford NLP group website. 
@@ -100,6 +104,7 @@ sequences to the length of the maximum length text sequence before inputting
 it to our model.
 
 \subsubsection{Learning Model}
+
 We will used a learning model that is  RNN variant to predict the stances. 
 The reason why it is based on RNN instead of CNN is that, for language 
 modelling, RNN models are still the best approach (Mikolov et al. 2011).
@@ -114,11 +119,13 @@ into a single “update gate” and merges the cell state and hidden state.
 This makes GRU computationally more efficient than LSTM and GRU model has 
 been increasingly popular. For this project we will use TensorFlow API for GRU,
 \textit{tf.nn.rnn\_cell.GRUCell}. 
+
 It is often said, that neural network performs better for a case like this. 
 Therefore, in this chance, we will also perform logistic regression as a 
 baseline for our project. We will build the logistic regression from scratch.
 To make sure our result is correct, we will use logistic regression provided by
 \textit{scikit.learn}.
+
 To measure the accuracy, we will use the evaluation tool provided by 
 Fake News Challenge. The tool will evaluate our model and output a score. 
 The score is weighted as follows:
