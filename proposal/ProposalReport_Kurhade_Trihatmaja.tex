@@ -16,31 +16,23 @@
 
 \abstract
 The problem of fake news has arisen recently as a threat to high-quality 
-journalism and well-informed public disclosure. 
-The goal of fake news challenge is to explore how artificial intelligence 
-technologies, particularly machine learning and 
-natural language processing, might be leveraged to combat the fake news problem.
-A dataset consisting of 49,972 news article samples which have been labeled 
-into four categories: 
-“Unrelated”, “Agrees”, “Disagrees”, and “Discusses” has been provided.
-Our goal is to develop machine learning models to predict these labels. 
-In this time, we will use Gate Recurrent Unit (GRU) to predict the labels.
-It is often said that neural network performs better in this kind of problem,
-therefore we will also incorporate logistic regression as our baseline.
+journalism and well-informed public disclosure. The goal of fake news 
+challenge is to explore how artificial intelligence technologies, particularly
+machine learning and natural language processing, might be leveraged to combat 
+the fake news problem. The goal of our project is to develop machine learning 
+models to predict a stance label (‘Agrees’, ’Disagrees’, ’Related’, ’Unrelated’) 
+with respect to the title for a respective news article. For this purpose we 
+will use gated recurrent unit (GRU) to predict the labels. As a baseline to 
+measure performance we will also solve the problem using logistic regression method.
 
 
 \section{Introduction}
-Over the past couple of years, the issue of “fake news” \-- defined by the 
-New York Times as “made-up stories written with the intention to deceive” and 
-published in formats similar to those of traditional “real” news has arisen as 
-a threat to high-quality journalism and the society in general. 
-In particular, fake news has been accused of increasing political polarization 
+In this project, we try to combat a serious problem in our media using machine 
+learning techniques. Fake news has been accused of increasing political polarization 
 and partisan conflict in the United States during the divisive 2016 
 presidential campaign and also during the Brexit referendum in 2016.
-In our final project for DS5220, we try to combat this serious social problem 
-using Machine Learning techniques. This problem views the task of fake-news 
-detection as a stance detection problem which is a labelling task, 
-where we want to automatically classify a news into four labels, 
+This problem views the task of fake-news detection as a stance detection problem 
+which is a labelling task. We want to automatically classify a news into four labels, 
 which are ‘unrelated’, ‘agrees’, ‘disagrees’, and ‘discusses’.  
 
 A reasoning for these labels is as follows:
@@ -52,9 +44,7 @@ A reasoning for these labels is as follows:
   \item \textbf{Unrelated}: The body text discusses a different topic than the headline
 \end{enumerate}
 
-Here, we don’t label the the news as binary (fake news or legitimate news),
-because labelling such datasets with binary label tend to be biased towards 
-the labeller. The classifier that we build could later be used as a base of a 
+The classifier that we build could later be used as a base of a 
 fake news detection tool that can automatically categorize the news into the 
 stances given.
 
@@ -63,8 +53,6 @@ stances given.
 
 The data provided by the Fake News Challenge consists of 
 headline, body, and stace. 
-Where stace is one of the categories we have mentioned above: 
-unrelated, discuss, agree, disagree. 
 For training, there are two csv files:
 \begin{enumerate}
   \item \textit{train\_bodies.csv}: contains the body text of articles with its ID
@@ -84,14 +72,9 @@ The distribution of the data is as follows:
     \hline
   \end{tabular}
 \end{center}
-
-For development and training, we will sample our data and 
-do data pre-processing.
-Roughly, we will use 2000 samples as our development set, 
-for choosing hyperparameter and performance evaluation, and leave the rest for 
+Roughly, we will use 2000 samples as our development set, for choosing 
+hyperparameter and performance evaluation, and leave the rest for 
 our training data. 
-The data pre-processing includes normalising the case, handling the punctuation
-and non-alphabetic symbols.
 
 \subsection{Methods}
 \subsubsection{Pre-processing}
@@ -101,30 +84,28 @@ then be mapped to corresponding vectorized forms using  pre-trained \textit{GloV
 representations freely available on the Stanford NLP group website. 
 Since the text sequences observed will be of variable length we will pad all 
 sequences to the length of the maximum length text sequence before inputting 
-it to our model.
+it to our model. The data pre-processing includes normalising the case, handling the punctuation
+and non-alphabetic symbols.
 
 \subsubsection{Learning Model}
 
 We will used a learning model that is  RNN variant to predict the stances. 
 The reason why it is based on RNN instead of CNN is that, for language 
-modelling, RNN models are still the best approach (Mikolov et al. 2011).
+modelling, RNN models are still the best approach (Mikolov et al. 2011). 
 The difficulty with RNN models is that they are hard to train, because they 
 suffer from the vanishing gradient problem (Kevin P. Murphy book page 570). 
-To solve the problem is to use RNN variant model called long short-term 
-memory (LSTM). 
-However, recently a model called gate recurrent unit (GRU) was introduced by 
-Cho et al. [2014].
-GRU is similar with LSTM. Unlike LSTM, GRU combines forget and input gates 
-into a single “update gate” and merges the cell state and hidden state.
-This makes GRU computationally more efficient than LSTM and GRU model has 
-been increasingly popular. For this project we will use TensorFlow API for GRU,
-\textit{tf.nn.rnn\_cell.GRUCell}. 
+The solution to this problem is to use RNN variant called long short-term memory
+(LSTM). However, recently a model called gate recurrent unit (GRU) was 
+introduced by Cho et al. [2014]. GRU is similar with LSTM. Unlike LSTM, GRU 
+combines forget and input gates into a single “update gate” and merges the cell
+state and hidden state. This makes GRU computationally more efficient than 
+LSTM and GRU model has been increasingly popular. For this project we will use 
+TensorFlow API for GRU, tf.nn.rnn\_cell.GRUCell. 
 
 It is often said, that neural network performs better for a case like this. 
 Therefore, in this chance, we will also perform logistic regression as a 
-baseline for our project. We will build the logistic regression from scratch.
-To make sure our result is correct, we will use logistic regression provided by
-\textit{scikit.learn}.
+baseline for our project. In this project, we will build the logistic 
+regression from scratch. 
 
 To measure the accuracy, we will use the evaluation tool provided by 
 Fake News Challenge. The tool will evaluate our model and output a score. 
@@ -135,8 +116,7 @@ The score is weighted as follows:
     \item Classifying related pairs as agrees, disagrees, or discusses is 
       weigted as 75\%
 \end{enumerate}
-The reason behind the weighting is the related/unrelated classification task is
-expected to be much easier while classifying the agrees, disagrees or discuss 
+The related/unrelated classification task is expected to be much easier while classifying the agrees, disagrees or discuss 
 is more difficult and more relevant to fake news detection.
 
 \section{References}
