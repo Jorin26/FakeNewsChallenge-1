@@ -104,16 +104,16 @@ with tf.Session() as sess:
         step += 1
     print("Optimization Finished!")
 
-test_x_title = testset.x_title
-test_x_body = testset.x_body
-test_y = testset.y
-test_seqlen_title = testset.seqlen_title
-test_seqlen_body = testset.seqlen_body
+    test_x_title = testset.x_title
+    test_x_body = testset.x_body
+    test_y = testset.y
+    test_seqlen_title = testset.seqlen_title
+    test_seqlen_body = testset.seqlen_body
 
-print("Test Accuracy:", sess.run(accuracy, feed_dict = {
-    x_title: test_x_title,
-    x_body: test_x_body,
-    y: test_y,
-    seqlen_title: test_seqlen_title,
-    seqlen_body: test_seqlen_body
-    }))
+    print("Test Accuracy:", sess.run(accuracy, feed_dict = {
+        x_title: test_x_title,
+        x_body: test_x_body,
+        y: test_y,
+        seqlen_title: test_seqlen_title,
+        seqlen_body: test_seqlen_body
+        }))

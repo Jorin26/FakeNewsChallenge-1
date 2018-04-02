@@ -29,8 +29,8 @@ seqlen_title = tf.placeholder(tf.int32, [None])
 seqlen_body = tf.placeholder(tf.int32, [None])
 
 
-weights={'out': tf.Variable(tf.random_normal([n_hidden, n_classes]))}
-biases={'out': tf.Variable(tf.random_normal([1, n_classes]))}
+weights = {'out': tf.Variable(tf.random_normal([n_hidden, n_classes]))}
+biases = {'out': tf.Variable(tf.random_normal([1, n_classes]))}
 
 def dynamicRNN(x_title, x_body, seqlen_title, seqlen_body, weights, biases):
 
@@ -70,7 +70,7 @@ with tf.Session() as sess:
     sess.run(init)
     step = 1
 
-    while step*batch_size<training_iters:
+    while step * batch_size < training_iters:
         print("step:", step)
 
         batch_x_title, batch_x_body, batch_y, batch_seqlen_title, batch_seqlen_body = trainset.next(batch_size)
@@ -103,16 +103,16 @@ with tf.Session() as sess:
         step += 1
     print("Optimization Finished!")
 
-test_x_title = testset.x_title
-test_x_body = testset.x_body
-test_y = testset.y
-test_seqlen_title = testset.seqlen_title
-test_seqlen_body = testset.seqlen_body
+    test_x_title = testset.x_title
+    test_x_body = testset.x_body
+    test_y = testset.y
+    test_seqlen_title = testset.seqlen_title
+    test_seqlen_body = testset.seqlen_body
 
-print("Test Accuracy:", sess.run(accuracy, feed_dict = {
-    x_title: test_x_title,
-    x_body: test_x_body,
-    y: test_y,
-    seqlen_title: test_seqlen_title,
-    seqlen_body: test_seqlen_body
-    }))
+    print("Test Accuracy:", sess.run(accuracy, feed_dict = {
+        x_title: test_x_title,
+        x_body: test_x_body,
+        y: test_y,
+        seqlen_title: test_seqlen_title,
+        seqlen_body: test_seqlen_body
+        }))
