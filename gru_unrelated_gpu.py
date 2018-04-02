@@ -9,7 +9,7 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 # loading the data
-data = pickle.load(open("data_related.p","rb"))
+data = pickle.load(open("/data/data_related.p","rb"))
 size = len(data)
 trainset = np.array(data[800:])
 np.random.shuffle(trainset)
@@ -17,20 +17,20 @@ trainset = DataWrapper(trainset)
 testset = DataWrapper(data[:800])
 data = None
 #network parameters
-learning_rate = 0.001
+training_iters = 100000
 #training_iters=100000
-training_iters = 3 * trainset.size
+learning_rate = 0.001
 batch_size = 128
 display_step = 10
 
-seq_max_len = 6000
+seq_max_len = max(trainset.max_seqlen(), testset.max_seqlen())
 n_input = 50
-n_hidden = 100
+n_hidden = 60
 n_classes = 2
 
 
-x_title = tf.placeholder("float", [None, seq_max_len,n_input])
-x_body = tf.placeholder("float", [None, seq_max_len,n_input])
+x_title = tf.placeholder("float", [None, seq_max_len, n_input])
+x_body = tf.placeholder("float", [None, seq_max_len, n_input])
 y = tf.placeholder("float", [None, n_classes])
 seqlen_title = tf.placeholder(tf.int32, [None])
 seqlen_body = tf.placeholder(tf.int32, [None])
@@ -82,8 +82,8 @@ with tf.device('/device:GPU:0'):
     step=1
     # saver.restore(sess, "/uac/y15/kcli5/FNC-1/tmp2/model_stance_1.0-290")
     # print("Model restored.")
-    while step*batch_size<training_iters:
-        print("step:",step)
+    while step*batch_size < training_iters:
+        print("step:", step)
 
         batch_x_title, batch_x_body, batch_y, batch_seqlen_title, batch_seqlen_body = trainset.next(batch_size)
         sess.run(optimizer,
