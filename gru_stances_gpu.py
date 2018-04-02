@@ -13,8 +13,8 @@ data = pickle.load(open("data_related.p","rb"))
 size = len(data)
 trainset = np.array(data[800:])
 np.random.shuffle(trainset)
-trainset = dataWrapper(trainset)
-testset = dataWrapper(data[:800])
+trainset = DataWrapper(trainset)
+testset = DataWrapper(data[:800])
 data = None
 #network parameters
 learning_rate = 0.001
