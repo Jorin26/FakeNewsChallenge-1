@@ -220,3 +220,7 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+
+# Python
+*.p
+*.ckpt.*
