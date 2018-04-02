@@ -224,3 +224,4 @@ TSWLatexianTemp*
 # Python
 *.ckpt.*
 glove.txt
+*.p
