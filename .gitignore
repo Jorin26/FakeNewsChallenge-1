@@ -222,5 +222,5 @@ TSWLatexianTemp*
 *.sta
 
 # Python
-*.p
 *.ckpt.*
+glove.txt
