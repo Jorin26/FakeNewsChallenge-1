@@ -4,7 +4,7 @@ import pickle
 from data_wrapper import DataWrapper
 
 # loading the data
-data=pickle.load(open("data_stances.p","rb"))
+data=pickle.load(open("data_related.p","rb"))
 size=len(data)
 trainset=DataWrapper(data[size//3:])
 testset=DataWrapper(data[:size//3])
