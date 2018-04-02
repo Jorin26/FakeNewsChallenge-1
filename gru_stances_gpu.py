@@ -80,9 +80,9 @@ with tf.device('/device:GPU:0'):
     sess=tf.Session(config=config)
     sess.run(init)
     step=1
-    saver.restore(sess, "/uac/y15/kcli5/FNC-1/tmp2/model_stance_1.0-290")
-    print("Model restored.")
-    while step*batch_size<training_iters:
+    # saver.restore(sess, "/uac/y15/kcli5/FNC-1/tmp2/model_stance_1.0-290")
+    # print("Model restored.")
+    while step * batch_size < training_iters:
         print("step:",step)
 
         batch_x_title, batch_x_body, batch_y, batch_seqlen_title, batch_seqlen_body = trainset.next(batch_size)
