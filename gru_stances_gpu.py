@@ -112,7 +112,7 @@ with tf.device('/device:GPU:0'):
             print("Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-            save_path = saver.save(sess, "/uac/y15/kcli5/FNC-1/tmp2/model_stance_1.0",global_step=step+540)
+            save_path = saver.save(sess, "./model_stance_1.0", global_step = step + 540)
             print("Model saved in file: %s" % save_path)
         step += 1
     print("Optimization Finished!")
