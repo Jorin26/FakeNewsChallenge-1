@@ -17,6 +17,7 @@ trainset = DataWrapper(trainset)
 testset = DataWrapper(data[:800])
 data = None
 #network parameters
+# What does each parameter do
 training_iters = 100000
 #training_iters=100000
 learning_rate = 0.001
@@ -29,18 +30,20 @@ n_hidden = 60
 n_classes = 2
 
 
+# Tensorflow placeholder
+# See: https://learningtensorflow.com/lesson4/
 x_title = tf.placeholder("float", [None, seq_max_len, n_input])
 x_body = tf.placeholder("float", [None, seq_max_len, n_input])
 y = tf.placeholder("float", [None, n_classes])
 seqlen_title = tf.placeholder(tf.int32, [None])
 seqlen_body = tf.placeholder(tf.int32, [None])
 
-
+# TF variables, more efficient than placeholder since performing lazy computing
 weights = {'out': tf.Variable(tf.random_normal([n_hidden, n_classes]))}
 biases = {'out': tf.Variable(tf.random_normal([1, n_classes]))}
 
 def dynamicRNN(x_title, x_body, seqlen_title, seqlen_body, weights, biases):
-
+    # Define the model
     gru_cell = rnn.GRUCell(n_hidden)
     print("testing_1")
     outputs_title, states_title = tf.nn.dynamic_rnn(cell = gru_cell,
