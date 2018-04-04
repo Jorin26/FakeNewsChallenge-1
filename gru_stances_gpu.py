@@ -9,7 +9,7 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 # loading the data
-data = pickle.load(open("data_related.p","rb"))
+data = pickle.load(open("data_stances.p","rb"))
 size = len(data)
 trainset = np.array(data[800:])
 np.random.shuffle(trainset)
