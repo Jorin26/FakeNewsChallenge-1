@@ -23,7 +23,7 @@ training_iters = 3 * trainset.size
 batch_size = 128
 display_step = 10
 
-seq_max_len = 6000
+seq_max_len = max(trainset.max_seqlen(), testset.max_seqlen())
 n_input = 50
 n_hidden = 100
 n_classes = 3
