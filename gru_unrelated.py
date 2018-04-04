@@ -4,23 +4,22 @@ from tensorflow.contrib import rnn
 import pickle
 from data_wrapper import DataWrapper 
 
+# loading the data
+data=pickle.load(open("data_related.p","rb"))
+size=len(data)
+trainset=DataWrapper(data[size//3:])
+testset=DataWrapper(data[:size//3])
+
 #network parameters
-learning_rate = 0.001
-training_iters = 100000
-batch_size = 1
-display_step = 10
+learning_rate=0.001
+training_iters=100000
+batch_size=128
+display_step=10
 
 seq_max_len = max(trainset.max_seqlen(), testset.max_seqlen())
 n_input = 50
 n_hidden = 60
 n_classes = 2
-
-# loading the data
-data = pickle.load(open("data_related.dev.p", "rb"))
-size = len(data)
-trainset = DataWrapper(data[size//3:])
-testset = DataWrapper(data[:size//3])
-
 
 x_title = tf.placeholder("float", [None, seq_max_len,n_input])
 x_body = tf.placeholder("float", [None, seq_max_len,n_input])
@@ -66,6 +65,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_pred,tf.float32))
 
 init = tf.global_variables_initializer()
 
+saver=tf.train.Saver()
 with tf.Session() as sess:
     sess.run(init)
     step = 1
@@ -101,6 +101,7 @@ with tf.Session() as sess:
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
         step += 1
+    save_path = saver.save(sess, "./gru_related_ckpt")
     print("Optimization Finished!")
 
     test_x_title = testset.x_title
