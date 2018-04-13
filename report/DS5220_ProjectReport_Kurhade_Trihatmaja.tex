@@ -72,16 +72,26 @@ The distribution of the data is as follows:
     \hline
   \end{tabular}
 \end{center}
+
 We will roughly use 4000 samples as our development set, for choosing 
 hyperparameter and performance evaluation, and use the rest for 
-our training data. 
 
 \subsubsection{Data Pre-processing}
 
-Before moving forward, we need to clean our data. The first data cleaning we do is first we normalize
+For both logistic and RNN, we will do the same data cleaning procedures. The difference is only how we model our data so that our model can process.
+The data cleaning procedures we perform is as follows:
 
-The data pre-processing includes normalizing the case, handling the punctuation
-and non-alphabetic symbols.
+\begin{enumerate}
+  \item Normalize the case
+  \item Remove all punctuations and non-alphabetic symbols 
+  \item Replace the shorten words with the normal words, for example you'll into you will
+\end{enumerate}
+
+\subsubsection{Logistic Regression}
+
+Since logistic regression cannot translate the relation between features, we treat our data  differently. 
+To reduce dimentionality of the data, we perform lemmatization on the headlines and the bodies and then concat them together into one single field. 
+We then build our tf-idf matrix with unique words a matrix. The matrix will look like this
 
 The text from the corpus will be converted to tokens using \textit{‘nltk’} package and 
 then be mapped to corresponding vectorized forms using  pre-trained \textit{GloVe} 
