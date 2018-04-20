@@ -86,7 +86,7 @@ In pseudocode, the training algorithm for an One vs All learner constructed from
     \State $z_i \gets 0$
     \EndIf
 
-	\State $f_k\gets L(X, z)$
+    \State $f_k\gets L(X, z)$\Comment{Apply $L$ to $X$, $z$ to obtain $f_k$}
     \EndFor
     \EndProcedure
   \end{algorithmic}
@@ -142,7 +142,7 @@ The distribution of the data is as follows:
 \end{table}
 
 We will roughly use 4000 samples as our development set, for choosing 
-hyperparameter and performance evaluation, and use the rest for training. 
+hyperparameter and performance evaluation, and use the rest for training. Meanwhile, for the test dataset we use 4000 samples for testing our model.
 
 \subsection{Data Pre-processing}
 
@@ -202,7 +202,7 @@ it to our model. The representation of the matrix can be seen as follows-
   \caption{Input representation for neural network}
 \end{table}
 
-We know that ~73 \% of our dataset has no relation between the headline and the body (unrelated stances). As our training dataset is skewed and has a majority of stances as 'related', we separate our training dataset into two. The first dataset contains related vs related stances where (agree, disagree, discuss) are together bucketed into 'related'. The second is a dataset containing only agree, disagree, discuss. We then train our models separately for each dataset.
+As our training dataset is skewed and has a majority of stances as 'unrelated', we separate our training dataset into two. The first dataset contains related vs related stances where (agree, disagree, discuss) are together bucketed into 'related'. The second is a dataset containing only agree, disagree, discuss. We then train our models separately for each dataset.
 
 In the case of RNNs, we represent the label as a vector. For the unrelated and related stance, we represent it as $[1, 0]$ if it is unrelated and $[0, 1]$ as related.
 While, for the second dataset we label our dataset as $[1, 0, 0]$ if the stance is agree, $[0, 1, 0]$ if the stance is disagree and $[0, 0, 1]$ as discuss. The final structure of our data for RNN looks as follows.
@@ -329,7 +329,7 @@ the accuracy is quite similar for every number of neurons. Therefore we choose 6
 
 We also calculated the accuracies for three hidden layers in RNN and the accuracy for related stances dropped drastically to 21.2 \%.
 For related vs unrelated stances (agree, disagree, discuss together form unrelated) we use the entire dataset while training and for the related stances training we only use agree, disagree,
-discuss stances which form around 27 \% of the total training data. Logistic Regression performs better on smaller datasets and hence has high accuracy for related stances. The neural networks give a good performance when there is a large dataset available to train them. This explains their higher accuracy as compared to logistic regression for related vs unrelated stances. Considering the overall performances of the models we conclude that a RNN model with two hidden layers is best suitable for our problem.
+discuss stances which form around 27 \% of the total training data. Logistic regression performs better on smaller datasets and hence has high accuracy for related stances. The neural networks give a good performance when there is a large dataset available to train them. This explains their higher accuracy as compared to logistic regression for related vs unrelated stances. Considering the overall performances of the models we conclude that a RNN model with two hidden layers is best suitable for our problem.
 
 \section{Participants Contribution}
 
