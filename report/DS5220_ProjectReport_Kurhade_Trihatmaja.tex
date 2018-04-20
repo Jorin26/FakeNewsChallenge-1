@@ -1,8 +1,11 @@
 \documentclass[11.5pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
-
-
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \title{Stance Detection for the Fake News Challenge Dataset using Deep Learning}
 
@@ -50,9 +53,65 @@ stances given.
 
 \section{Technical Approach}
 
+Our problem of stance detection can be viewed as that of text classification with each of the stances as a possible classes. We use two approaches to solve this problem viz. logistic regression and deep neural networks.
+
+\subsection{Logistic Regression}
+
+Logistic is the appropriate regression analysis to conduct when the dependent variable is dichotomous (binary). Logistic regression is used to describe data and to explain the relationship between one dependent binary variable (stances in our case) and one or more independent variables (words in the vocabulary). 
+In our problem setting we aim at classifying every news article body in a stance with respect to the title. For representing the text as features we use a representation form called tf-idf (term frequency – inverse document frequency) matrix. Here, each document is represented as a vector with respect to the vocabulary of words. The model concatenates the text from the title and the body of an news article to prepare a vectorised representation. This representation increases the values of weights for words proportionally to the number of times a word appears in the document and is offset by the frequency of the word in the corpus. This is helpful in our task as the news articles are of variable length, thus giving us a robust feature representation. We perform ‘one vs all’ regression for each stance. 
+In pseudocode, the training algorithm for an One vs All learner constructed from a binary classification learner L is as follows:
+
+\begin{algorithm}[H]
+  \caption{Logistic regression}\label{logistic}
+  \textbf{Input}
+
+  \hspace*{\algorithmicindent}L (training algorithm for binary classifiers)
+
+  \hspace*{\algorithmicindent}samples $X$
+
+  \hspace*{\algorithmicindent}labels $y$ where $y_i \in \{1, ..., K\}$ is the label for the sample $X_i$ 
+
+  \textbf{Output}
+
+  \hspace*{\algorithmicindent}a list of classifiers $f_k$ for $k \in \{1, ..., K\}$
+
+  \begin{algorithmic}[1]
+    \Procedure{LogisticRegression}{}
+    \For{$k\gets 1, K$}
+    \If{$y_i = k$}
+    \State $z_i \gets 1$
+    \Else
+    \State $z_i \gets 0$
+    \EndIf
+
+	\State $f_k\gets L(X, z)$
+    \EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+Making decisions means applying all classifiers to an unseen sample $x$ and predicting the label $k$ for which 
+the corresponding classifier reports the highest confidence score $f_k$.
+ 
+\subsection{Deep Neural Networks}
+
+Neural networks are a set of algorithms, modelled loosely after the human brain, that are designed to recognize patterns. They interpret sensory data through a kind of machine perception, labeling or clustering raw input. The patterns they recognize are numerical, contained in vectors, into which all real-world data, be it images, sound, text or time series, must be translated. 
+Traditionally RNNs have been widely used in NLP tasks because of their memory capabilities helping them to retain the sequence information in the text, thus developing better language models. However, they suffer from problems of vanishing gradient and variants of RNNs consisting of LSTM and GRU cells solve this problem. As GRUs are faster and computationally less expensive we implemented our network using GRU cells in Tensorflow to predict the stances. For feature representation we embed each word in the title and article body using GloVe representations into vectors of size 50. These are pre-trained word vector representations made readily available by Stanford NLP group. We have tried two variants of neural networks for our task:
+
+\begin{enumerate}
+  \item Vanilla RNN with single hidden layer   
+  \item RNN with multiple hidden layers and dropout  
+\end{enumerate}
+
+The input layer consisting of 50 GRU cells accepts one word at a time from the input news 
+title and article whose output is then used as an input for the next hidden layer. 
+This pipelining of outputs as input to next layer continues for all hidden layers and 
+the final layer which consists of softmax layer classifies the stance. 
+We use the cross entropy loss function to calculate the loss and optimize it using the Adam Optimizer.
+ It is important to note that the neural network preserves the sequential information present in the sentences 
+to generate weights for classifying the test samples unlike the baseline method which is a bag of words model. 
 
 \section{Experimental Results}
-Describe the datasets used for your experiments. Be precise in describing all information about the datasets, including, classes, number of samples per class, features used to represent data, and all pre/post processing of the datasets.\\Describe the details about the implementation of each algorithm, e.g., how you perform training, validation, testing, values of the hyperparameters and your methods for hyperparameter tuning, training/validation/testing error on the dataset, and all useful plots/tables that help to better interpret your results and your work.
 
 \subsection{Dataset Overview}
 
@@ -67,7 +126,8 @@ For training, there are two csv files:
 \end{enumerate}
 
 The distribution of the data is as follows:
-\begin{center}
+\begin{table}[h]
+  \centering
   \begin{tabular} 
     {|c|c|c|c|c|}
     \hline
@@ -76,7 +136,8 @@ The distribution of the data is as follows:
     49972 & 0.73131 & 0.17828 & 0.0736012 & 0.0168094 \\
     \hline
   \end{tabular}
-\end{center}
+  \caption{Dataset distribution}
+\end{table}
 
 We will roughly use 4000 samples as our development set, for choosing 
 hyperparameter and performance evaluation, and use the rest for training. 
@@ -94,9 +155,10 @@ The data cleaning procedures we perform is as follows:
 
 Since logistic regression cannot translate the relation between features, we treat our data  differently. 
 To reduce dimentionality of the data, we perform lemmatization on the headlines and the bodies and then concat them together into one single field. 
-We then build our tf-idf matrix with unique words a matrix using scikit-learn \cite{scikit-learn}. The tf-idf matrix looks like below.
+We then build our TF-IDF matrix with unique words a matrix using scikit-learn \cite{scikit-learn}. The TF-IDF matrix looks like below.
 
-\begin{center}
+\begin{table}[h]
+  \centering
   \begin{tabular} 
     {|c|c|c|c|c|c|}
     \hline
@@ -109,7 +171,8 @@ We then build our tf-idf matrix with unique words a matrix using scikit-learn \c
     Document 3  & 0.12 & 0.0 & 0.101 & 0.012 & 0.0 \\
     \hline
   \end{tabular}
-\end{center}
+  \caption{Input representation for logistic regression}
+\end{table}
 
 Each row in the table represents each document we have in the dataset. While, each column represents the number of
 a word occurs in the document divided by the number of words in the document itself.
@@ -121,7 +184,8 @@ Since the text sequences observed will be of variable length we will pad all
 sequences to the length of the maximum length text sequence before inputting 
 it to our model. The representation of the matrix can be seen as follow.
 
-\begin{center}
+\begin{table}[h]
+  \centering
   \begin{tabular} 
     {|c|c|c|}
     \hline
@@ -134,7 +198,8 @@ it to our model. The representation of the matrix can be seen as follow.
     Document 3 & [0.28, 0.1, ...], [0.134, 0.3, ...], ... & [0.05, 0.001, ...], [0.121, 0.189, ...] \\
     \hline
   \end{tabular}
-\end{center}
+  \caption{Input representation for neural network}
+\end{table}
 
 We know that ~73 \% of our dataset has no relation between the headline and the body (unrelated stances). To fix this, we separate our dataset into two.
 The first part is the unrelated and related stance and the second part contains related stances (agree, disagree, discuss). We then train them separately.
@@ -142,7 +207,8 @@ The first part is the unrelated and related stance and the second part contains 
 For GRU, we represent the label as a vector. For the unrelated and related stance, we represent it as $[1, 0]$ if it is unrelated and $[0, 1]$ as related.
 While, for the second part we label our dataset as $[1, 0, 0]$ if the stance is agree, $[0, 1, 0]$ if the stance is disagree and $[0, 0, 1]$ as discuss. The final structure of our data for GRU looks as follow.
 
-\begin{center}
+\begin{table}[h]
+  \centering
   \begin{tabular} 
     {|c|c|c|c|}
     \hline
@@ -155,7 +221,8 @@ While, for the second part we label our dataset as $[1, 0, 0]$ if the stance is 
     Document 3 & [0.28, 0.1, ...], [0.134, 0.3, ...], ... & [0.05, 0.001, ...], [0.121, 0.189, ...] & [1,0] \\
     \hline
   \end{tabular}
-\end{center}
+  \caption{Final input representation for neural network}
+\end{table}
 
 \subsection{Experimental Settings}
 
@@ -165,7 +232,8 @@ For the logistic regression, we have 33795 unique and lemmatized words as featur
 We run our training in a computer running Linux Fedora 27 with Intel i7-8550U CPU @ 1.80GHz × 8 and 16 GB of RAM for both GRU and logistic regression. The traing takes three hours to train the neural network while for the logistic it takes around 10 minutes. 
 For getting the test result, we run our test for the neural network in AWS EC2 p3.2xlarge running Ubuntu with specification as follow.
 
-\begin{center}
+\begin{table}[h]
+  \centering
   \begin{tabular} 
     {|c|c|c|c|}
     \hline
@@ -174,9 +242,102 @@ For getting the test result, we run our test for the neural network in AWS EC2 p
     1 & 16 & 8 & 61 \\
     \hline
   \end{tabular}
-\end{center}
+  \caption{AWS specification}
+\end{table}
 
+\subsection{Validation}
 
+To make sure we get the best result, in our logistic regression, we run cross validation to get the best hyperparameter.
+We run the the logistic with several C values. C in logistic regression is the inverse of regularization strength. 
+
+\begin{figure}[h!]
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{plot_1}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{plot_2}
+  \end{subfigure}
+  \caption{Test validation scores against value of C for each dataset}
+  \label{fig:logistic}
+\end{figure}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular} 
+    {|c|c|c|c|}
+    \hline
+     & C = 1e-15 & C = 1 & C = 1000 \\
+    \hline
+    Agree & 0 \% & 71 \% & 68 \% \\
+    \hline
+    Disagree & 0 \% & 0 \% & 46 \% \\
+    \hline
+    Discuss & 59 \% & 77 \% & 79 \% \\
+    \hline
+  \end{tabular}
+  \caption{Precision score for different value of C in related stances dataset}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular} 
+    {|c|c|c|c|}
+    \hline
+     & C = 1e-15 & C = 1 & C = 1000 \\
+    \hline
+    Agree & 0 \% & 63 \% & 66 \% \\
+    \hline
+    Disagree & 0 \% & 0 \% & 19 \% \\
+    \hline
+    Discuss & 100 \% & 89 \% & 85 \% \\
+    \hline
+  \end{tabular}
+  \caption{Recall score for different value of C in related stances dataset}
+\end{table}
+
+For the GRU, we run the validation using different number of neurons. We then pick the best result.
+
+\begin{figure}[h!]
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{plot_9}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.9\linewidth]{plot_11}
+  \end{subfigure}
+  \caption{Test validation scores against number of hidden neurons for each dataset}
+  \label{fig:neurons}
+\end{figure}
+
+The graph above shows the effect of number of neurons in a layer for each dataset. We can see that the accuracy reaches its peak at number of neuron 60 for unrelated vs related dataset, while for the related stances
+the accuracy is quite similar for every number of neurons. Therefore we pick 60 as the our number of neurons.
+
+\subsection{Results and Analysis}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular} 
+    {|c|c|c|c|}
+    \hline
+    
+    Accuracy & Logistic regression & RNN with 1 hidden layer & RNN with 2 hidden layers \\
+    \hline
+    Related vs unrelated & 52.76 \% & 81.58 \% & 78.66 \% \\
+    \hline
+    Related stances & 66.03 \% & 56.94 \% & 61.19 \% \\
+    \hline
+  \end{tabular}
+  \caption{Results from RNN and logistic regression}
+\end{table}
+
+We also calculate accuracies for three hidden layers in RNN the accuracy for related stances dropped drastically to 21.2 \%.
+For related vs unrelated stances (agree, disagree, discuss together form unrelated) we use the entire dataset while training and for the related stances training we only use agree, disagree,
+discuss stances which form around 27 \% of the total training data. Logistic Regression performs better on smaller datasets and hence has high accuracy for related stances. The neural networks give a good performance when there is a large dataset available to train them. This explains their higher accuracy as compared to logistic regression for related vs unrelated stances. Considering the overall performances of the models we conclude that a RNN model with two hidden layers is best suitable for our problem.
+
+\newpage
 \section{Participants Contribution}
 Please list the name of the participants. For each participant explain in details the role he/she played in the project: explain which methods was implemented by which member, which dataset was processed by which member, which experimental results were generated by which members, etc.
 
