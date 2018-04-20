@@ -146,7 +146,7 @@ hyperparameter and performance evaluation, and use the rest for training.
 
 \subsection{Data Pre-processing}
 
-For both logistic and RNN, we will do the same data cleaning procedures.There is a difference in feature representation for each of the models.
+For both logistic and RNN, we will do the same data cleaning procedures. There is a difference in feature representation for each of the models.
 The data cleaning procedures we perform is as follows:
 
 \begin{enumerate}
@@ -157,7 +157,7 @@ The data cleaning procedures we perform is as follows:
 
  
 In case of logistic regression to reduce dimentionality, we perform lemmatization on the text generated from concatinating headlines and the bodies. 
-We then build our TF-IDF matrix with this vocabulary and data using scikit-learn \cite{scikit-learn}. The TF-IDF matrix looks like below.
+We then build our tf-idf matrix with this vocabulary and data using scikit-learn \cite{scikit-learn}. The tf-idf matrix looks like below.
 
 \begin{table}[h]
   \centering
@@ -227,7 +227,7 @@ While, for the second dataset we label our dataset as $[1, 0, 0]$ if the stance 
 \subsection{Experimental Settings}
 
 Our dataset consists of 4 classes (unrelated, agrees, disagrees, discuss) with headline and body as features for the RNNs. Each word in GRU is represented as a vector of length 50.
-For the logistic regression, we have 33795 unique and lemmatized words used as features represented in form of TF-IDF matrix.
+For the logistic regression, we have 33795 unique and lemmatized words used as features represented in form of tf-idf matrix.
 
 We train our models on a computer with Intel i7-8550U CPU @ 1.80GHz × 8 and 16 GB of RAM. The neural network takes four hours to train while the logistic regression model takes about ten minutes
 For getting the test result, we run our test for the neural network on AWS (Amazon Web Services) EC2 p3.2xlarge package running Ubuntu with specifications as-
