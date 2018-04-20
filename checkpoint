@@ -1,2 +1,0 @@
-model_checkpoint_path: "gru_related_ckpt"
-all_model_checkpoint_paths: "gru_related_ckpt"
