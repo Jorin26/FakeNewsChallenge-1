@@ -49,6 +49,11 @@ fake news detection tool that can automatically categorize the news into the
 stances given.
 
 \section{Technical Approach}
+
+
+\section{Experimental Results}
+Describe the datasets used for your experiments. Be precise in describing all information about the datasets, including, classes, number of samples per class, features used to represent data, and all pre/post processing of the datasets.\\Describe the details about the implementation of each algorithm, e.g., how you perform training, validation, testing, values of the hyperparameters and your methods for hyperparameter tuning, training/validation/testing error on the dataset, and all useful plots/tables that help to better interpret your results and your work.
+
 \subsection{Dataset Overview}
 
 The data provided by the Fake News Challenge consists of 
@@ -74,9 +79,9 @@ The distribution of the data is as follows:
 \end{center}
 
 We will roughly use 4000 samples as our development set, for choosing 
-hyperparameter and performance evaluation, and use the rest for 
+hyperparameter and performance evaluation, and use the rest for training. 
 
-\subsubsection{Data Pre-processing}
+\subsection{Data Pre-processing}
 
 For both logistic and RNN, we will do the same data cleaning procedures. The difference is only how we model our data so that our model can process.
 The data cleaning procedures we perform is as follows:
@@ -84,25 +89,93 @@ The data cleaning procedures we perform is as follows:
 \begin{enumerate}
   \item Normalize the case
   \item Remove all punctuations and non-alphabetic symbols 
-  \item Replace the shorten words with the normal words, for example you'll into you will
+  \item Replace the shorten words with the normal words, for example: you'll into you will
 \end{enumerate}
-
-\subsubsection{Logistic Regression}
 
 Since logistic regression cannot translate the relation between features, we treat our data  differently. 
 To reduce dimentionality of the data, we perform lemmatization on the headlines and the bodies and then concat them together into one single field. 
-We then build our tf-idf matrix with unique words a matrix. The matrix will look like this
+We then build our tf-idf matrix with unique words a matrix using scikit-learn \cite{scikit-learn}. The tf-idf matrix looks like below.
 
-The text from the corpus will be converted to tokens using \textit{‘nltk’} package and 
-then be mapped to corresponding vectorized forms using  pre-trained \textit{GloVe} 
-representations freely available on the Stanford NLP group website\cite{Bird:2009:NLP:1717171,pennington2014glove}. 
+\begin{center}
+  \begin{tabular} 
+    {|c|c|c|c|c|c|}
+    \hline
+    & Word 1 & Word 2 & Word 3 & Word 4 & ... \\
+    \hline
+    Document 1 & 0.01 & 0.0 & 0.05 & 0.13 & 0.12 \\
+    \hline
+    Document 2 & 0.2 & 0.0 & 0.04 & 0.4 & 0.1 \\
+    \hline
+    Document 3  & 0.12 & 0.0 & 0.101 & 0.012 & 0.0 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Each row in the table represents each document we have in the dataset. While, each column represents the number of
+a word occurs in the document divided by the number of words in the document itself.
+
+For RNN GRU, we represents our data as word vectors. The text from the corpus will be mapped to corresponding vectorized
+forms using  pre-trained \textit{GloVe} 
+representations--freely available on the Stanford NLP group website\cite{Bird:2009:NLP:1717171,pennington2014glove}. 
 Since the text sequences observed will be of variable length we will pad all 
 sequences to the length of the maximum length text sequence before inputting 
-it to our model. 
+it to our model. The representation of the matrix can be seen as follow.
 
+\begin{center}
+  \begin{tabular} 
+    {|c|c|c|}
+    \hline
+    & Headlines & Bodies \\
+    \hline
+    Document 1 & [0.23, 0.12, ...], [0.123, 0.14, ...], ... & [0.05, 0.012, ...], [0.121, 0.123, ...] \\
+    \hline
+    Document 2 & [0.23, 0.12, ...], [0.119, 0.4, ...], ... & [0.11, 0.011, ...], [0.109, 0.89, ...] \\
+    \hline
+    Document 3 & [0.28, 0.1, ...], [0.134, 0.3, ...], ... & [0.05, 0.001, ...], [0.121, 0.189, ...] \\
+    \hline
+  \end{tabular}
+\end{center}
 
-\section{Experimental Results}
-Describe the datasets used for your experiments. Be precise in describing all information about the datasets, including, classes, number of samples per class, features used to represent data, and all pre/post processing of the datasets.\\Describe the details about the implementation of each algorithm, e.g., how you perform training, validation, testing, values of the hyperparameters and your methods for hyperparameter tuning, training/validation/testing error on the dataset, and all useful plots/tables that help to better interpret your results and your work.
+We know that ~73 \% of our dataset has no relation between the headline and the body (unrelated stances). To fix this, we separate our dataset into two.
+The first part is the unrelated and related stance and the second part contains related stances (agree, disagree, discuss). We then train them separately.
+
+For GRU, we represent the label as a vector. For the unrelated and related stance, we represent it as $[1, 0]$ if it is unrelated and $[0, 1]$ as related.
+While, for the second part we label our dataset as $[1, 0, 0]$ if the stance is agree, $[0, 1, 0]$ if the stance is disagree and $[0, 0, 1]$ as discuss. The final structure of our data for GRU looks as follow.
+
+\begin{center}
+  \begin{tabular} 
+    {|c|c|c|c|}
+    \hline
+    & Headlines & Bodies & Stances \\
+    \hline
+    Document 1 & [0.23, 0.12, ...], [0.123, 0.14, ...], ... & [0.05, 0.012, ...], [0.121, 0.123, ...] & [0,1] \\
+    \hline
+    Document 2 & [0.23, 0.12, ...], [0.119, 0.4, ...], ... & [0.11, 0.011, ...], [0.109, 0.89, ...] & [1, 0] \\
+    \hline
+    Document 3 & [0.28, 0.1, ...], [0.134, 0.3, ...], ... & [0.05, 0.001, ...], [0.121, 0.189, ...] & [1,0] \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\subsection{Experimental Settings}
+
+Our dataset consists of 4 classes (unrelated, agrees, disagrees, discuss) with headline and body as features for the GRU. Each word in GRU is represented as a vector of length 50.
+For the logistic regression, we have 33795 unique and lemmatized words as features represented as TF-IDF matrix.
+
+We run our training in a computer running Linux Fedora 27 with Intel i7-8550U CPU @ 1.80GHz × 8 and 16 GB of RAM for both GRU and logistic regression. The traing takes three hours to train the neural network while for the logistic it takes around 10 minutes. 
+For getting the test result, we run our test for the neural network in AWS EC2 p3.2xlarge running Ubuntu with specification as follow.
+
+\begin{center}
+  \begin{tabular} 
+    {|c|c|c|c|}
+    \hline
+    GPUs - Tesla V100 & GPU Memory (GB) & vCPUs & Memory (GB) \\
+    \hline
+    1 & 16 & 8 & 61 \\
+    \hline
+  \end{tabular}
+\end{center}
+
 
 \section{Participants Contribution}
 Please list the name of the participants. For each participant explain in details the role he/she played in the project: explain which methods was implemented by which member, which dataset was processed by which member, which experimental results were generated by which members, etc.
