@@ -53,7 +53,7 @@ stances given.
 
 \section{Technical Approach}
 
-Our problem of stance detection can be viewed as that of text classification with each of the stances as a possible classes. We use two approaches to solve this problem viz. logistic regression and deep neural networks.
+Our problem of stance detection can be viewed as that of text classification with each of the stances as a possible class. We use two approaches to solve this problem viz. logistic regression and deep neural networks.
 
 \subsection{Logistic Regression}
 
@@ -144,7 +144,7 @@ hyperparameter and performance evaluation, and use the rest for training.
 
 \subsection{Data Pre-processing}
 
-For both logistic and RNN, we will do the same data cleaning procedures. The difference is only how we model our data so that our model can process.
+For both logistic and RNN, we will do the same data cleaning procedures.There is a difference in feature representation for each of the models.
 The data cleaning procedures we perform is as follows:
 
 \begin{enumerate}
@@ -153,9 +153,9 @@ The data cleaning procedures we perform is as follows:
   \item Replace the shorten words with the normal words, for example: you'll into you will
 \end{enumerate}
 
-Since logistic regression cannot translate the relation between features, we treat our data  differently. 
-To reduce dimentionality of the data, we perform lemmatization on the headlines and the bodies and then concat them together into one single field. 
-We then build our TF-IDF matrix with unique words a matrix using scikit-learn \cite{scikit-learn}. The TF-IDF matrix looks like below.
+ 
+In case of logistic regression to reduce dimentionality, we perform lemmatization on the text generated from concatinating headlines and the bodies. 
+We then build our TF-IDF matrix with this vocabulary and data using scikit-learn \cite{scikit-learn}. The TF-IDF matrix looks like below.
 
 \begin{table}[h]
   \centering
@@ -174,15 +174,14 @@ We then build our TF-IDF matrix with unique words a matrix using scikit-learn \c
   \caption{Input representation for logistic regression}
 \end{table}
 
-Each row in the table represents each document we have in the dataset. While, each column represents the number of
-a word occurs in the document divided by the number of words in the document itself.
+Each row in the table represents one document we have in the dataset. While, each column represents a word present in the vocabulary.
 
-For RNN GRU, we represents our data as word vectors. The text from the corpus will be mapped to corresponding vectorized
+For RNN using GRUs, we represents our data as word vectors. The text from the corpus will be mapped to corresponding vectorized
 forms using  pre-trained \textit{GloVe} 
 representations--freely available on the Stanford NLP group website\cite{Bird:2009:NLP:1717171,pennington2014glove}. 
 Since the text sequences observed will be of variable length we will pad all 
 sequences to the length of the maximum length text sequence before inputting 
-it to our model. The representation of the matrix can be seen as follow.
+it to our model. The representation of the matrix can be seen as follows-
 
 \begin{table}[h]
   \centering
@@ -201,11 +200,10 @@ it to our model. The representation of the matrix can be seen as follow.
   \caption{Input representation for neural network}
 \end{table}
 
-We know that ~73 \% of our dataset has no relation between the headline and the body (unrelated stances). To fix this, we separate our dataset into two.
-The first part is the unrelated and related stance and the second part contains related stances (agree, disagree, discuss). We then train them separately.
+We know that ~73 \% of our dataset has no relation between the headline and the body (unrelated stances). As our training dataset is skewed and has a majority of stances as 'related', we separate our training dataset into two. The first dataset contains related vs related stances where (agree, disagree, discuss) are together bucketed into 'related'. The second is a dataset containing only agree, disagree, discuss. We then train our models separately for each dataset.
 
-For GRU, we represent the label as a vector. For the unrelated and related stance, we represent it as $[1, 0]$ if it is unrelated and $[0, 1]$ as related.
-While, for the second part we label our dataset as $[1, 0, 0]$ if the stance is agree, $[0, 1, 0]$ if the stance is disagree and $[0, 0, 1]$ as discuss. The final structure of our data for GRU looks as follow.
+In the case of RNNs, we represent the label as a vector. For the unrelated and related stance, we represent it as $[1, 0]$ if it is unrelated and $[0, 1]$ as related.
+While, for the second dataset we label our dataset as $[1, 0, 0]$ if the stance is agree, $[0, 1, 0]$ if the stance is disagree and $[0, 0, 1]$ as discuss. The final structure of our data for RNN looks as follows.
 
 \begin{table}[h]
   \centering
@@ -226,11 +224,11 @@ While, for the second part we label our dataset as $[1, 0, 0]$ if the stance is 
 
 \subsection{Experimental Settings}
 
-Our dataset consists of 4 classes (unrelated, agrees, disagrees, discuss) with headline and body as features for the GRU. Each word in GRU is represented as a vector of length 50.
-For the logistic regression, we have 33795 unique and lemmatized words as features represented as TF-IDF matrix.
+Our dataset consists of 4 classes (unrelated, agrees, disagrees, discuss) with headline and body as features for the RNNs. Each word in GRU is represented as a vector of length 50.
+For the logistic regression, we have 33795 unique and lemmatized words used as features represented in form of TF-IDF matrix.
 
-We run our training in a computer running Linux Fedora 27 with Intel i7-8550U CPU @ 1.80GHz × 8 and 16 GB of RAM for both GRU and logistic regression. The traing takes three hours to train the neural network while for the logistic it takes around 10 minutes. 
-For getting the test result, we run our test for the neural network in AWS EC2 p3.2xlarge running Ubuntu with specification as follow.
+We train our models on a computer with Intel i7-8550U CPU @ 1.80GHz × 8 and 16 GB of RAM. The neural network takes four hours to train while the logistic regression model takes about ten minutes
+For getting the test result, we run our test for the neural network on AWS (Amazon Web Services) EC2 p3.2xlarge package running Ubuntu with specifications as-
 
 \begin{table}[h]
   \centering
@@ -247,8 +245,7 @@ For getting the test result, we run our test for the neural network in AWS EC2 p
 
 \subsection{Validation}
 
-To make sure we get the best result, in our logistic regression, we run cross validation to get the best hyperparameter.
-We run the the logistic with several C values. C in logistic regression is the inverse of regularization strength. 
+We get the best value for regularization using cross validation on our logistic regression model. We run the the logistic with several C values. The C in denotes the inverse of regularization strength. The results of the cross validation are as follows-
 
 \begin{figure}[h!]
   \begin{subfigure}{.5\textwidth}
@@ -312,8 +309,8 @@ For the GRU, we run the validation using different number of neurons. We then pi
   \label{fig:neurons}
 \end{figure}
 
-The graph above shows the effect of number of neurons in a layer for each dataset. We can see that the accuracy reaches its peak at number of neuron 60 for unrelated vs related dataset, while for the related stances
-the accuracy is quite similar for every number of neurons. Therefore we pick 60 as the our number of neurons.
+The graph above shows the effect of number of neurons in a layer for each dataset. We can see that the accuracy reaches its peak when there are 60 neurons in hidden layer for unrelated vs related dataset, while for the related stances
+the accuracy is quite similar for every number of neurons. Therefore we choose 60 as the number of neurons in the hidden layers	.
 
 \subsection{Results and Analysis}
 
@@ -342,7 +339,9 @@ discuss stances which form around 27 \% of the total training data. Logistic Reg
 Please list the name of the participants. For each participant explain in details the role he/she played in the project: explain which methods was implemented by which member, which dataset was processed by which member, which experimental results were generated by which members, etc.
 
 \vspace{10mm}
-** Please do not change the size of the fonts.** Please note that your submission must be at most 7 pages long.
+** Please do not change the size of the fonts.
+
+** Please note that your submission must be at most 7 pages long.
 
 \bibliographystyle{unsrt}
 \bibliography{2380985}
