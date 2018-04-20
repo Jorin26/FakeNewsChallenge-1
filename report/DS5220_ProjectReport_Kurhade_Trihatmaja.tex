@@ -327,7 +327,7 @@ the accuracy is quite similar for every number of neurons. Therefore we choose 6
   \caption{Results from RNN and logistic regression}
 \end{table}
 
-We also calculate accuracies for three hidden layers in RNN the accuracy for related stances dropped drastically to 21.2 \%.
+We also calculated the accuracies for three hidden layers in RNN and the accuracy for related stances dropped drastically to 21.2 \%.
 For related vs unrelated stances (agree, disagree, discuss together form unrelated) we use the entire dataset while training and for the related stances training we only use agree, disagree,
 discuss stances which form around 27 \% of the total training data. Logistic Regression performs better on smaller datasets and hence has high accuracy for related stances. The neural networks give a good performance when there is a large dataset available to train them. This explains their higher accuracy as compared to logistic regression for related vs unrelated stances. Considering the overall performances of the models we conclude that a RNN model with two hidden layers is best suitable for our problem.
 
